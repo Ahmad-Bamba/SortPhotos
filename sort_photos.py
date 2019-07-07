@@ -12,6 +12,10 @@ def get_year(image_path):
     return raw[36867][0:4] if (raw is not None) else "0000"
 
 def main():
+    print("This may permenently altler the file organisation of this folder. Continue? Y/n:", end='')
+    response = input('')
+    if not (len(response) == 0 or response.lower()[0] == 'y'):
+        sys.exit()
     cwd = os.getcwd()
     print(f"Working from {cwd}...\n\n")
 
