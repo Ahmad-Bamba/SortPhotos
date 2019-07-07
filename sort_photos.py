@@ -8,11 +8,28 @@ import sys
 import ntpath
 
 def get_year(image_path):
-    raw = Image.open(image_path)._getexif()
-    return raw[36867][0:4] if (raw is not None) else "0000"
+    try:
+        raw = Image.open(image_path)._getexif()
+        return raw[36867][0:4] if (raw is not None) else "0000"
+    except KeyError:
+        print(f"Somehow, the key didnt work for image at {image_path}")
+        return "0000"
+    except OSError:
+        print(f"The image at {image_path} could not be identified!")
+        return "IDEN"
+    except SyntaxError:
+        print(f"The image at {image_path} has an invalid TIFF header! Ignoring...")
+        return "IDEN"
+    except AttributeError:
+        print(f"The image at {image_path} has no EXIF data!")
+        return "0000"
+    except:
+        print("Something else went wrong :(")
+        return "IDEN"
+
 
 def main():
-    print("This may permenently altler the file organisation of this folder. Continue? Y/n:", end='')
+    print("This may permenently alter the file organisation of this folder. Continue? Y/n:", end='')
     response = input('')
     if not (len(response) == 0 or response.lower()[0] == 'y'):
         sys.exit()
@@ -28,6 +45,9 @@ def main():
     for image in images:
         # extract year from image
         year = get_year(image)
+        if year == "IDEN":
+            continue
+
         if (not os.path.isdir(cwd + "/" + year)):
             os.mkdir(year)
 
