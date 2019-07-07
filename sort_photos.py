@@ -24,12 +24,26 @@ def main():
     for image in images:
         # extract year from image
         year = get_year(image)
-        if year == "0000":
-            year = "Other"
         if (not os.path.isdir(cwd + "/" + year)):
             os.mkdir(year)
 
-        os.rename(image, str(Path(cwd) / year / ntpath.basename(image)))
+        # rename file just in case 2 files exist in the tree with the same name and year
+        newpath = Path(cwd) / year / ntpath.basename(image)
+        if os.path.exists(str(newpath)):
+            append = 0
+            newnewpath_str = str(newpath)
+            while True:
+                extension_split = str(newpath).split('.', 1)
+                newnewpath_str = extension_split[0] + "_" + str(append) + "." + extension_split[1]
+                if os.path.exists(newnewpath_str):
+                    append += 1
+                    continue
+                else:
+                    break
+
+            newpath = Path(newnewpath_str)
+
+        os.rename(image, str(newpath))
         print(".")
     
     # Print exit message
