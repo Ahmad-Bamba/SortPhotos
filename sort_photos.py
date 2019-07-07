@@ -1,5 +1,8 @@
-import os
+#!/usr/bin/python3
+
 from PIL import Image
+from pathlib import Path
+import os
 import glob
 import sys
 import ntpath
@@ -13,8 +16,10 @@ def main():
     print(f"Working from {cwd}...\n\n")
 
     # Get some kind of representation of every .png, .jpg, and .jpeg file in the directory
-    images = glob.glob(cwd + "/*.jpg") + glob.glob(cwd + "/*.jpeg") + glob.glob(cwd + "/*.png")
-    print(images)
+    images = glob.glob(str(Path(cwd + "/**/*.jpg")), recursive=True) + glob.glob(str(Path(cwd + "/**/*.jpeg")), recursive=True) \
+        + glob.glob(str(Path(cwd + "/**/*.png")), recursive=True) + glob.glob(str(Path(cwd + "/**/*.JPG")), recursive=True) \
+        + glob.glob(str(Path(cwd + "/**/*.JPEG")), recursive=True) + glob.glob(str(Path(cwd + "/**/*.PNG")), recursive=True)
+    print(f"Found {len(images)} images!")
 
     for image in images:
         # extract year from image
@@ -24,7 +29,7 @@ def main():
         if (not os.path.isdir(cwd + "/" + year)):
             os.mkdir(year)
 
-        os.rename(image, cwd + "/" + year + "/" + ntpath.basename(image))
+        os.rename(image, str(Path(cwd) / year / ntpath.basename(image)))
         print(".")
     
     # Print exit message
